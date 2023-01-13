@@ -3,10 +3,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ClientsModule } from './clients/clients.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import 'dotenv/config';
+
+const DATABASE_URL = process.env.DATABASE_URL as string;
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/test_nest'),
+    MongooseModule.forRoot(DATABASE_URL),
     ClientsModule,
     UsersModule,
     AuthModule,
