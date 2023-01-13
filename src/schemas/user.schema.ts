@@ -13,6 +13,18 @@ export class User {
   @Prop({ required: true })
   password: string;
 
+  @Prop({ required: true, unique: true })
+  email: string;
+
+  @Prop()
+  firstName: string;
+
+  @Prop()
+  lastName: string;
+
+  @Prop()
+  profilePictureUrl: string;
+
   @Prop({ default: Role.User })
   readonly roles: Role[];
 }
