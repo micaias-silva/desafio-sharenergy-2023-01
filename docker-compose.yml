@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  micaias_silva_mongodb:
+    container_name: micaias_silva_mongodb
+    image: mongo:5.0
+    restart: always
+
+    ports:
+      - 8081:27017
+
+    env_file:
+      - ./backend/.env
+
+  micaias_silva_backend:
+    container_name: micaias_silva_backend
+    build: ./backend/
+    env_file:
+      - ./backend/.env
+    ports:
+      - 3000:3000
+
+    depends_on:
+      - micaias_silva_mongodb
+
+    volumes:
+      - .:/app:rw
