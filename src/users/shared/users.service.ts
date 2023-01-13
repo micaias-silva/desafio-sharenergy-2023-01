@@ -39,8 +39,6 @@ export class UsersService {
       await randomUsersApi.get(`?results=${count}`)
     ).data.results;
 
-    console.log(generatedUsers);
-
     const userPromisseList = generatedUsers.map((user) => {
       return this.userModel.create({
         username: user.login.username,
