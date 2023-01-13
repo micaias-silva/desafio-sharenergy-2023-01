@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
+import { randomUsersApi } from 'src/services/api';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
@@ -31,5 +32,26 @@ export class UsersService {
 
   async remove(id: string) {
     await this.userModel.remove({ _id: id });
+  }
+
+  async generateRandomUsers(count = 100) {
+    const generatedUsers: any[] = await (
+      await randomUsersApi.get(`?results=${count}`)
+    ).data.results;
+
+    console.log(generatedUsers);
+
+    const userPromisseList = generatedUsers.map((user) => {
+      return this.userModel.create({
+        username: user.login.username,
+        password: user.login.password,
+        firstName: user.name.first,
+        lastName: user.name.last,
+        email: user.email,
+        profilePictureUrl: user.picture.large,
+      });
+    });
+
+    await Promise.all(userPromisseList);
   }
 }
