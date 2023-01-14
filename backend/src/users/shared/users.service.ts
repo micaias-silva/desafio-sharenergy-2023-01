@@ -34,9 +34,9 @@ export class UsersService {
     await this.userModel.remove({ _id: id });
   }
 
-  async generateRandomUsers(count = 100) {
+  async generateRandomUsers(count?: number) {
     const generatedUsers: any[] = await (
-      await randomUsersApi.get(`?results=${count}`)
+      await randomUsersApi.get(`?results=${count || 50}`)
     ).data.results;
 
     const userPromisseList = generatedUsers.map((user) => {
