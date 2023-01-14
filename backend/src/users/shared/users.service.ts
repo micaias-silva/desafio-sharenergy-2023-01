@@ -47,6 +47,7 @@ export class UsersService {
         lastName: user.name.last,
         email: user.email,
         profilePictureUrl: user.picture.large,
+        birthdate: user.dob.date,
       });
     });
 
