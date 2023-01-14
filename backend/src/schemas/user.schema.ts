@@ -17,13 +17,16 @@ export class User {
   email: string;
 
   @Prop()
-  firstName: string;
+  firstName?: string;
 
   @Prop()
-  lastName: string;
+  lastName?: string;
 
   @Prop()
-  profilePictureUrl: string;
+  profilePictureUrl?: string;
+
+  @Prop()
+  birthdate?: Date;
 
   @Prop({ default: Role.User })
   readonly roles: Role[];
