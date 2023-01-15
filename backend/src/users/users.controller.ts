@@ -32,7 +32,7 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<UserSerializer> {
     const createdUser = await this.usersService.create(createUserDto);
-    return new UserSerializer(createdUser);
+    return new UserSerializer(createdUser!);
   }
 
   @Post('populate')

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { PaginateModel, PaginateResult } from 'mongoose';
+import mongoose, { PaginateModel, PaginateResult } from 'mongoose';
 import { defaultPaginationOptions } from 'src/config/pagination.config';
 import { User, UserDocument } from 'src/schemas/user.schema';
-import { randomUsersApi } from 'src/services/api';
+import { randomUsersApi } from 'src/services/randomUserApi';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
@@ -27,7 +27,12 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    return await this.userModel.findOne({ _id: id });
+    const user = await this.userModel.findOne({ _id: id });
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 
   async findOneByUsername(username: string) {
@@ -35,11 +40,13 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.userModel.updateOne({ _id: id }, { ...updateUserDto });
+    const user = await this.findOne(id);
+    return await user.update({ ...updateUserDto }); 
   }
 
   async remove(id: string) {
-    await this.userModel.remove({ _id: id });
+    const user = await this.findOne(id);
+    await user.remove();
   }
 
   async generateRandomUsers(count?: number) {

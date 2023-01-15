@@ -1,5 +1,5 @@
 import { Model, PaginateModel } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -29,14 +29,25 @@ export class ClientsService {
   }
 
   async findOne(id: string) {
-    return await this.clientModel.findOne({ _id: id }).populate('address');
+    const client = await this.clientModel
+      .findOne({ _id: id })
+      .populate('address');
+
+    if (!client) {
+      throw new NotFoundException();
+    }
+
+    return client;
   }
 
   async update(id: string, updateClientDto: UpdateClientDto) {
-    await this.clientModel.updateOne({ _id: id }, { ...updateClientDto });
+    const client = await this.findOne(id);
+
+    return await client.update({ ...updateClientDto });
   }
 
   async remove(id: string) {
-    await this.clientModel.remove({ _id: id });
+    const client = await this.findOne(id);
+    await client.remove();
   }
 }
