@@ -44,8 +44,16 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    const usersPage = await this.usersService.findAll(page, limit);
+  async search(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('term') term?: string,
+  ) {
+    if (term) {
+      term = term.trim();
+    }
+
+    const usersPage = await this.usersService.search(page, limit, term);
     return new PaginatedUserSerializer(usersPage);
   }
 
