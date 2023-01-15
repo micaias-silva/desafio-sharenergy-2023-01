@@ -34,8 +34,6 @@ export class AddressSerializer {
       minimize: true,
     });
 
-    console.log(partial);
-
     Object.assign(this, partial);
   }
 }
