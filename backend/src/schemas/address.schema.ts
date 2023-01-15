@@ -6,10 +6,10 @@ export type AddressDocument = HydratedDocument<Address>;
 @Schema()
 export class Address {
   @Prop({ required: true })
-  zipcode: number;
+  zipcode: string;
 
   @Prop({ required: true })
-  number: number;
+  number: string;
 
   @Prop({ required: true })
   country: string;
