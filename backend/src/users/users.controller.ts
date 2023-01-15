@@ -21,6 +21,7 @@ import { RolesGuard } from 'src/auth/shared/roles.guard';
 import { Roles } from 'src/auth/shared/roles.decorator';
 import { Role } from 'src/auth/shared/role.enum';
 import { UserSerializer } from './serializers/user.serializer';
+import { PaginatedUserSerializer } from './serializers/paginated-user.serializer';
 
 @SerializeOptions({ excludeExtraneousValues: true })
 @Controller('users')
@@ -43,11 +44,9 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async findAll() {
-    const users = await this.usersService.findAll();
-    return users.map((user) => {
-      return new UserSerializer(user);
-    });
+  async findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
+    const usersPage = await this.usersService.findAll(page, limit);
+    return new PaginatedUserSerializer(usersPage);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

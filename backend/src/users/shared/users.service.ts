@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+
+import { PaginateModel, PaginateResult } from 'mongoose';
+import { defaultPaginationOptions } from 'src/config/pagination.config';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { randomUsersApi } from 'src/services/api';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -8,14 +10,20 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name)
+    private userModel: PaginateModel<UserDocument>,
+  ) {}
 
   async create(createUserDTO: CreateUserDto) {
     return await this.userModel.create(createUserDTO);
   }
 
-  async findAll() {
-    return await this.userModel.find();
+  async findAll(
+    page = 1,
+    limit = defaultPaginationOptions.limit,
+  ): Promise<PaginateResult<UserDocument>> {
+    return await this.userModel.paginate({}, { page, limit: limit });
   }
 
   async findOne(id: string) {
