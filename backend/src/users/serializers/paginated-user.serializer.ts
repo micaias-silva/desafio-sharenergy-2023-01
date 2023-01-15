@@ -13,6 +13,5 @@ export class PaginatedUserSerializer extends PartialType(PaginationSerializer) {
   constructor(partial: Partial<PaginateResult<UserDocument>>) {
     super();
     Object.assign(this, partial);
-    console.log(this);
   }
 }
