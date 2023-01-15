@@ -21,11 +21,25 @@ export class ClientsService {
     return client;
   }
 
-  async findAll(page = 1, limit = defaultPaginationOptions.limit) {
-    return await this.clientModel.paginate(
-      {},
-      { page, limit, populate: 'address' },
-    );
+  async search(
+    page = 1,
+    limit = defaultPaginationOptions.limit,
+    term?: string,
+  ) {
+    const query = term
+      ? {
+          $or: [
+            { name: { $regex: term, $options: 'i' } },
+            { email: { $regex: term, $options: 'i' } },
+          ],
+        }
+      : {};
+
+    return await this.clientModel.paginate(query, {
+      page,
+      limit,
+      populate: 'address',
+    });
   }
 
   async findOne(id: string) {
