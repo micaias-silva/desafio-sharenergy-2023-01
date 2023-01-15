@@ -30,7 +30,6 @@ export class ClientSerializer {
       minimize: true,
     });
 
-    console.log(this.address);
     Object.assign(this, partial);
   }
 }
