@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsDefined,
   IsEmail,
@@ -6,8 +7,10 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
-import { Address } from 'src/schemas/address.schema';
+
+import { CreateAddressDto } from './create-address.dto';
 
 export class CreateClientDto {
   @IsDefined()
@@ -29,5 +32,7 @@ export class CreateClientDto {
   )
   cpf: string;
 
-  address: Address;
+  @ValidateNested()
+  @Type(() => CreateAddressDto)
+  address: CreateAddressDto;
 }
