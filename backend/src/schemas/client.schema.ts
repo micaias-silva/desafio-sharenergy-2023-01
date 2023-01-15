@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as OGSchema } from 'mongoose';
 import { Address } from './address.schema';
+const paginate = require('mongoose-paginate-v2');
 
 export type ClientDocument = HydratedDocument<Client>;
 
@@ -22,4 +23,5 @@ export class Client {
   address: Address;
 }
 
-export const ClientSchema = SchemaFactory.createForClass(Client);
+export const ClientSchema =
+  SchemaFactory.createForClass(Client).plugin(paginate);

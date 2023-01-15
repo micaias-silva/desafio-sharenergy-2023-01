@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, PaginateModel } from 'mongoose';
 import { hash } from 'bcrypt';
 import { Role } from 'src/auth/shared/role.enum';
+
+const paginate = require('mongoose-paginate-v2');
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -32,12 +34,10 @@ export class User {
   readonly roles: Role[];
 }
 
-const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.pre('save', async function (next) {
-  const user = this as User;
-  user.password = await hash(user.password, 10);
-  next();
-});
-
-export { UserSchema };
+export const UserSchema = SchemaFactory.createForClass(User)
+  .plugin(paginate)
+  .pre('save', async function (next) {
+    const user = this as User;
+    user.password = await hash(user.password, 10);
+    next();
+  });
