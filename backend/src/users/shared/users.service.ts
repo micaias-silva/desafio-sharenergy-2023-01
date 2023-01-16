@@ -19,11 +19,47 @@ export class UsersService {
     return await this.userModel.create(createUserDTO);
   }
 
-  async findAll(
+  async searchUser(term?: string) {
+    const query = term
+      ? {
+          $or: [
+            { firstName: { $regex: term, $options: 'i' } },
+            { lastName: { $regex: term, $options: 'i' } },
+            { email: { $regex: term, $options: 'i' } },
+            { username: { $regex: term, $options: 'i' } },
+          ],
+        }
+      : {};
+    return await this.userModel.paginate(query, { page: 1, limit: 10 });
+    await this.userModel.find();
+  }
+
+  async search(
     page = 1,
     limit = defaultPaginationOptions.limit,
+    term?: string,
   ): Promise<PaginateResult<UserDocument>> {
-    return await this.userModel.paginate({}, { page, limit: limit });
+    const query = term
+      ? {
+          $or: [
+            { firstName: { $regex: term, $options: 'i' } },
+            { lastName: { $regex: term, $options: 'i' } },
+            { email: { $regex: term, $options: 'i' } },
+            { username: { $regex: term, $options: 'i' } },
+            {
+              $expr: {
+                $regexMatch: {
+                  input: { $concat: ['$firstName', ' ', '$lastName'] },
+                  regex: term,
+                  options: 'i',
+                },
+              },
+            },
+          ],
+        }
+      : {};
+
+    return await this.userModel.paginate(query, { page, limit });
   }
 
   async findOne(id: string) {
@@ -41,7 +77,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
-    return await user.update({ ...updateUserDto }); 
+    return await user.update({ ...updateUserDto });
   }
 
   async remove(id: string) {

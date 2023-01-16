@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   SerializeOptions,
+  Query,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/shared/roles.decorator';
 import { Role } from 'src/auth/shared/role.enum';
@@ -37,8 +38,12 @@ export class ClientsController {
   }
 
   @Get()
-  async findAll() {
-    const usersPage = await this.clientsService.findAll();
+  async search(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('term') term?: string,
+  ) {
+    const usersPage = await this.clientsService.search(page, limit, term);
     return new PaginatedClientSerializer(usersPage);
   }
 
