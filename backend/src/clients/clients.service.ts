@@ -55,9 +55,19 @@ export class ClientsService {
   }
 
   async update(id: string, updateClientDto: UpdateClientDto) {
-    const client = await this.findOne(id);
+    const client = await this.findOne(id); //procura um cliente pelo id
 
-    return await client.update({ ...updateClientDto });
+    const address: any = client.address;
+
+    const updatedAddress = await this.addressModel.findOneAndUpdate(
+      { _id: address.id },
+      { ...updateClientDto.address },
+    );
+
+    return await client.update({
+      ...updateClientDto,
+      address: updatedAddress,
+    });
   }
 
   async remove(id: string) {
