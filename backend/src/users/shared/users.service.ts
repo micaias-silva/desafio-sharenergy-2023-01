@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { PaginateModel, PaginateResult } from 'mongoose';
+import mongoose, { PaginateModel, PaginateResult } from 'mongoose';
 import { defaultPaginationOptions } from 'src/config/pagination.config';
 import { User, UserDocument } from 'src/schemas/user.schema';
-import { randomUsersApi } from 'src/services/api';
+import { randomUsersApi } from 'src/services/randomUserApi';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
@@ -19,15 +19,56 @@ export class UsersService {
     return await this.userModel.create(createUserDTO);
   }
 
-  async findAll(
+  async searchUser(term?: string) {
+    const query = term
+      ? {
+          $or: [
+            { firstName: { $regex: term, $options: 'i' } },
+            { lastName: { $regex: term, $options: 'i' } },
+            { email: { $regex: term, $options: 'i' } },
+            { username: { $regex: term, $options: 'i' } },
+          ],
+        }
+      : {};
+    return await this.userModel.paginate(query, { page: 1, limit: 10 });
+    await this.userModel.find();
+  }
+
+  async search(
     page = 1,
     limit = defaultPaginationOptions.limit,
+    term?: string,
   ): Promise<PaginateResult<UserDocument>> {
-    return await this.userModel.paginate({}, { page, limit: limit });
+    const query = term
+      ? {
+          $or: [
+            { firstName: { $regex: term, $options: 'i' } },
+            { lastName: { $regex: term, $options: 'i' } },
+            { email: { $regex: term, $options: 'i' } },
+            { username: { $regex: term, $options: 'i' } },
+            {
+              $expr: {
+                $regexMatch: {
+                  input: { $concat: ['$firstName', ' ', '$lastName'] },
+                  regex: term,
+                  options: 'i',
+                },
+              },
+            },
+          ],
+        }
+      : {};
+
+    return await this.userModel.paginate(query, { page, limit });
   }
 
   async findOne(id: string) {
-    return await this.userModel.findOne({ _id: id });
+    const user = await this.userModel.findOne({ _id: id });
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 
   async findOneByUsername(username: string) {
@@ -35,11 +76,13 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.userModel.updateOne({ _id: id }, { ...updateUserDto });
+    const user = await this.findOne(id);
+    return await user.update({ ...updateUserDto });
   }
 
   async remove(id: string) {
-    await this.userModel.remove({ _id: id });
+    const user = await this.findOne(id);
+    await user.remove();
   }
 
   async generateRandomUsers(count?: number) {
