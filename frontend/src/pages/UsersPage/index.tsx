@@ -8,8 +8,7 @@ const UsersPage = () => {
 
   const [request, setRequest] = useState<BackendUserResponse[]>([]);
   const [page, setPage] = useState<number>(Number(query.get('page')) || 1);
-  const [term, setTerm] = useState<string>(Number())
-  console.log(page);
+  const [term, setTerm] = useState<string>(query.get('term') || '');
 
   useEffect(() => {
     backendApi
@@ -18,7 +17,7 @@ const UsersPage = () => {
     console.log(request);
   }, []);
   return (
-    <main onend>
+    <main>
       {request.map((user) => {
         return <UserCard key={user.id} {...user} />;
       })}
