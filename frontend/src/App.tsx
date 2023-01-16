@@ -2,7 +2,9 @@ import { Route, Switch } from 'react-router-dom';
 import NavigationHeader from './components/NavigationHeader';
 import HomePage from './pages/HomePage';
 import HttpCatsPage from './pages/HttpCatsPage';
+import LoginPage from './pages/LoginPage';
 import RandomDogPage from './pages/RandomDogPage';
+import UsersPage from './pages/UsersPage';
 import { Wrapper } from './styles/Containers';
 
 function App() {
@@ -19,6 +21,12 @@ function App() {
           </Route>
           <Route exact path="/http-cats">
             <HttpCatsPage />
+          </Route>
+          <Route exact path="/login">
+            <LoginPage />
+          </Route>
+          <Route exact path="/users">
+            <UsersPage />
           </Route>
         </Switch>
       </Wrapper>
