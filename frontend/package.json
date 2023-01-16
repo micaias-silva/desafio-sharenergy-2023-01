@@ -9,11 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
+    "@reduxjs/toolkit": "^1.9.1",
     "@stitches/react": "^1.2.8",
+    "@types/yup": "^0.32.0",
     "axios": "^1.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "v5"
+    "react-hook-form": "^7.42.1",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "v5",
+    "redux": "^4.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
