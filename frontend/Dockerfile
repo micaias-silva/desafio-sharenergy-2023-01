@@ -2,7 +2,11 @@ FROM node:lts-alpine
 
 RUN apk update
 
-COPY package.json .
+EXPOSE 5173
+
+WORKDIR /app/frontend
+
+COPY "package.json" .
 
 RUN yarn
 
