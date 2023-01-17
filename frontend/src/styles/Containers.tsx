@@ -11,9 +11,9 @@ export const Container = styled('div', {
 });
 
 export const Wrapper = styled('div', {
-  minHeight: '100vh',
-  maxWidth: '100vw',
-  marginTop: 80,
+  minHeight: '100vh - 100',
+  maxWidth: '100%',
+  marginTop: 100,
 });
 
 export const Flex = styled('div', {
@@ -33,4 +33,12 @@ export const Grid = styled('div', {
   '@mobile': {
     gridTemplateColumns: '100%',
   },
+});
+
+export const PageButtonContainer = styled('div', {
+  height: 100,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  gap: '$2',
 });
