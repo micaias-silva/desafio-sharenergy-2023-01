@@ -9,7 +9,7 @@ const DATABASE_URL = process.env.DATABASE_URL as string;
 
 @Module({
   imports: [
-    MongooseModule.forRoot(DATABASE_URL),
+    MongooseModule.forRoot(DATABASE_URL, { authSource: 'admin' }),
     ClientsModule,
     UsersModule,
     AuthModule,

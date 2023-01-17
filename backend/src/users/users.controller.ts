@@ -8,6 +8,9 @@ import {
   Delete,
   UseGuards,
   Query,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  SerializeOptions,
 } from '@nestjs/common';
 import { UsersService } from './shared/users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,14 +20,19 @@ import { UserAuthGuard } from 'src/auth/shared/auth-user.guard';
 import { RolesGuard } from 'src/auth/shared/roles.guard';
 import { Roles } from 'src/auth/shared/roles.decorator';
 import { Role } from 'src/auth/shared/role.enum';
+import { UserSerializer } from './serializers/user.serializer';
+import { PaginatedUserSerializer } from './serializers/paginated-user.serializer';
 
+@SerializeOptions({ excludeExtraneousValues: true })
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserSerializer> {
+    const createdUser = await this.usersService.create(createUserDto);
+    return new UserSerializer(createdUser!);
   }
 
   @Post('populate')
@@ -34,15 +42,27 @@ export class UsersController {
     await this.usersService.generateRandomUsers(Number(query.results));
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async search(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('term') term?: string,
+  ) {
+    if (term) {
+      term = term.trim();
+    }
+
+    const usersPage = await this.usersService.search(page, limit, term);
+    return new PaginatedUserSerializer(usersPage);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersService.findOne(id);
+
+    return new UserSerializer(user!);
   }
 
   @UseGuards(JwtAuthGuard, UserAuthGuard)

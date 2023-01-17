@@ -7,6 +7,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  SerializeOptions,
+  Query,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/shared/roles.decorator';
 import { Role } from 'src/auth/shared/role.enum';
@@ -16,43 +20,48 @@ import { RolesGuard } from 'src/auth/shared/roles.guard';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { PaginatedClientSerializer } from './serializers/paginated-client-serializer';
+import { ClientSerializer } from './serializers/client.serializer';
 
+@SerializeOptions({ excludeExtraneousValues: true })
+@UseInterceptors(ClassSerializerInterceptor)
+@Roles(Role.Admin)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  create(@Body() data: CreateClientDto) {
-    return this.clientsService.create(data);
+  async create(@Body() data: CreateClientDto) {
+    const user = await this.clientsService.create(data);
+    return new ClientSerializer(user);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  async findAll() {
-    return this.clientsService.findAll();
+  async search(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('term') term?: string,
+  ) {
+    const usersPage = await this.clientsService.search(page, limit, term);
+    return new PaginatedClientSerializer(usersPage);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
-    return this.clientsService.findOne(id);
+    const client = await this.clientsService.findOne(id);
+    return new ClientSerializer(client);
   }
 
   @Patch(':id')
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto,
   ) {
-    await this.clientsService.update(id, updateClientDto);
+    return await this.clientsService.update(id, updateClientDto);
   }
 
   @Delete(':id')
-  @Roles(Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     await this.clientsService.remove(id);
   }
