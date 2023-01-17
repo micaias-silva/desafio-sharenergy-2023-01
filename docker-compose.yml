@@ -26,9 +26,9 @@ services:
     volumes:
       - .:/app:rw
 
-  micaias_silva_frontend:
-    container_name: micaias_silva_frontend
-    build: ./frontend/
+  # micaias_silva_frontend:
+  #   container_name: micaias_silva_frontend
+  #   build: ./frontend/
 
-    ports:
-      - 5173:5173
+  #   ports:
+  #     - 5173:5173
