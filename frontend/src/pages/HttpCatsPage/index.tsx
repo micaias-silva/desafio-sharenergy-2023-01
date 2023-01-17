@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Media from '../../components/Media';
 import httpCatsApi from '../../services/httpCatsApi';
+import { Container, Flex } from '../../styles/Containers';
+import { Input } from '../../styles/Form';
+import { StyledHttpCatsPage } from './styles';
 
 const HttpCatsPage = () => {
   const baseUrl = 'https://http.cat/';
@@ -11,21 +14,26 @@ const HttpCatsPage = () => {
 
   useEffect(() => {
     setMediaUrl(baseUrl + search);
-    console.log(search);
+
     return () => {};
   }, [search, location]);
 
   return (
-    <main>
-      <input
-        type="number"
-        onChange={(e) => {
-          const value = Number(e.target.value);
-          setSearch(value || 404);
-        }}
-      />
-      <Media url={mediaUrl} />
-    </main>
+    <StyledHttpCatsPage>
+      <Container>
+        <Flex>
+          <Input
+            placeholder="Search HTTP; Ex.: 200, 404..."
+            type="number"
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setSearch(value || 404);
+            }}
+          />
+          <Media url={mediaUrl} />
+        </Flex>
+      </Container>
+    </StyledHttpCatsPage>
   );
 };
 

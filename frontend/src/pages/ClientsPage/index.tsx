@@ -1,26 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { StyledBasicButton } from '../../components/Button/styles';
 import UserCard from '../../components/UserCard';
 import { useQuery } from '../../lib/queryParams';
-import { backendApi, PaginatedUserResponse } from '../../services/backendApi';
+import { backendApi, PaginatedClienResponse } from '../../services/backendApi';
+import { useSelector } from 'react-redux';
+import ClientCard from '../../components/ClientCard';
 import { Container, PageButtonContainer } from '../../styles/Containers';
 import { Input } from '../../styles/Form';
+import { StyledBasicButton } from '../../components/Button/styles';
 
-const UsersPage = () => {
+const ClientsPage = () => {
   const query = useQuery();
   const location = useLocation();
 
-  const [request, setRequest] = useState<PaginatedUserResponse>();
+  const session = useSelector((state: any) => state.session);
+
+  const [request, setRequest] = useState<PaginatedClienResponse>();
   const [page, setPage] = useState<number>(Number(query.get('page')) || 1);
   const [term, setTerm] = useState<string>(query.get('term') || '');
 
   useEffect(() => {
-    backendApi.get(`/users?page=${page}&term=${term}`).then((res) => {
-      setRequest(res.data);
-    });
+    backendApi
+      .get(`/clients?page=${page}&term=${term}`, {
+        headers: { authorization: 'Bearer ' + session },
+      })
+      .then((res) => {
+        setRequest(res.data);
+      });
     return () => {};
   }, [term, page, location]);
+
   return (
     <Container as="main">
       <Input
@@ -31,8 +40,8 @@ const UsersPage = () => {
         }}
         placeholder="Search Users"
       />
-      {request?.docs.map((user) => {
-        return <UserCard key={user.id} {...user} />;
+      {request?.docs.map((client) => {
+        return <ClientCard key={client.id} {...client} />;
       })}
       <PageButtonContainer>
         {request?.hasPrevPage && (
@@ -50,4 +59,4 @@ const UsersPage = () => {
   );
 };
 
-export default UsersPage;
+export default ClientsPage;
