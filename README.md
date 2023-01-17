@@ -2,16 +2,18 @@
 
 Repositório destinado aos interessados em participar do processo seletivo da SHARENERGY 2023/01. As vagas são voltadas para desenvolvimento de aplicações Web e Mobile.
 
-## Instalação
+## Instalação e Execução do Backend
 
 ```Bash
-$ yarn install
+$ docker compose up
 ```
 
-## Execução
+## Execução do Frontend
 
 ```Bash
-$ yarn start
+$ cd frontend
+$ yarn
+$ yarn vite
 ```
 
 ## Sobre a SHARENERGY
