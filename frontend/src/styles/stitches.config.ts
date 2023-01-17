@@ -19,12 +19,12 @@ export const { styled, globalCss } = createStitches({
     },
     fontSizes: {
       normal: '1rem',
-      topic: '1.5rem',
-      title: '2.25rem',
+      larger: '1.5rem',
+      largest: '2.25rem',
     },
     space: {
-      1: '0.5rem',
-      2: '1rem',
+      1: '1rem',
+      2: '1.5rem',
     },
   },
 });
