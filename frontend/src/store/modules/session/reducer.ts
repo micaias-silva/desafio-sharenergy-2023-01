@@ -1,4 +1,5 @@
-const initialState: string | null = '';
+const initialState =
+  sessionStorage.getItem('token') || localStorage.getItem('token');
 
 const sessionReducer = (state = initialState, action: any) => {
   switch (action.type) {
