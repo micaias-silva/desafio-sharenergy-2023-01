@@ -1,7 +1,7 @@
 import { StyledComponent } from '@stitches/react/types/styled-component';
 import { ReactNode } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
-import { BasicButtonStyle } from './styles';
+import { StyledBasicButton, StyledNavigationButton } from './styles';
 
 interface ButtonProps {
   //   Style: StyledComponent<'button'>;
@@ -12,9 +12,9 @@ interface ButtonProps {
 const NavigationButton = ({ children, to }: ButtonProps) => {
   const history = useHistory();
   return (
-    <BasicButtonStyle onClick={() => (to ? history.push(to) : null)}>
+    <StyledNavigationButton onClick={() => (to ? history.push(to) : null)}>
       {children}
-    </BasicButtonStyle>
+    </StyledNavigationButton>
   );
 };
 

@@ -1,5 +1,13 @@
 import { BackendUserResponse } from '../../services/backendApi';
-import { Text } from '../../styles/Text';
+import { Flex } from '../../styles/Containers';
+import { Text, TopicTitle } from '../../styles/Text';
+import {
+  StyledUserCard,
+  UserFrame,
+  UserInfo,
+  UserProfilePicture,
+} from './styles';
+import noUserSvg from '../../assets/no-user.svg';
 
 const UserCard = ({
   id,
@@ -11,14 +19,29 @@ const UserCard = ({
   birthdate,
 }: BackendUserResponse) => {
   return (
-    <div>
-      <Text>{username}</Text>
-      <Text>{email}</Text>
-      {firstName ? <Text>{firstName}</Text> : null}
-      {lastName ? <Text>{lastName}</Text> : null}
-      {birthdate ? <Text>{birthdate}</Text> : null}
-      {profilePictureUrl ? <img src={profilePictureUrl} /> : null}
-    </div>
+    <StyledUserCard>
+      <Flex>
+        <UserFrame>
+          <UserProfilePicture src={profilePictureUrl || noUserSvg} />
+        </UserFrame>
+
+        <UserInfo>
+          <div>
+            {firstName && lastName && (
+              <TopicTitle>{firstName + ' ' + lastName}</TopicTitle>
+            )}
+            <Text>{username}</Text>
+            <Text>{email}</Text>
+          </div>
+          {birthdate ? (
+            <Text>
+              {new Date(Date.now()).getFullYear() -
+                new Date(birthdate).getFullYear()}
+            </Text>
+          ) : null}
+        </UserInfo>
+      </Flex>
+    </StyledUserCard>
   );
 };
 
